@@ -86,7 +86,7 @@ function App() {
     setTranslating(true);
     fetch("https://translation-web-app-backend.onrender.com/auto-translate", {
       method: "POST",
-      headers: { "Content-Type": "application/json" ,"X-API-KEY": process.env.API_KEY},
+      headers: { "Content-Type": "application/json" ,"X-API-KEY": process.env.REACT_APP_API_KEY},
       body: JSON.stringify({ text, target: outputLang }),
     })
       .then((res) => res.json())
