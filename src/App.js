@@ -62,9 +62,11 @@ function App() {
     };
 
     recog.onerror = (err) => {
-      console.error("Speech recognition error:", err);
       setListening(false);
-      recognitionRef.current = null;
+  recognitionRef.current = null;
+  if (err.error === "not-allowed" || err.error === "denied") {
+    alert("Microphone permission is required for recording.");
+  }
     };
 
     recog.onend = () => {

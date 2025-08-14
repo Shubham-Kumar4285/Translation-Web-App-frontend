@@ -6,24 +6,41 @@ function SpeakButton({ translated, lang }) {
     }
 
     const synth = window.speechSynthesis;
-    // Clear any existing speech
-    synth.cancel();
+    synth.cancel(); // stop any current speech
 
-    const utter = new SpeechSynthesisUtterance(translated);
+    let voices = synth.getVoices();
+
+    if (!voices.length) {
+      synth.onvoiceschanged = () => {
+        voices = synth.getVoices();
+        speakNow(translated, lang, voices, synth);
+      };
+    } else {
+      speakNow(translated, lang, voices, synth);
+    }
+  };
+
+  const speakNow = (text, lang, voices, synth) => {
+    const utter = new SpeechSynthesisUtterance(text);
+
+    // Find a matching voice for the given lang ('en', 'en-US', 'es', etc.)
+    const matchingVoice =
+      voices.find(v => v.lang.toLowerCase().startsWith(lang.toLowerCase())) ||
+      voices[0];
+
+    if (matchingVoice) {
+      utter.voice = matchingVoice;
+    }
     utter.lang = lang || "en-US";
-    utter.rate = 1;   
-    utter.pitch = 1; 
-    utter.volume = 1; 
+    utter.rate = 1;
+    utter.pitch = 1;
+    utter.volume = 1;
 
-    
-    // utter.onstart = () => console.log("🔊 Speech started");
-    // utter.onend = () => console.log("✅ Speech ended");
-    // utter.onerror = (e) => console.error("❌ Speech synthesis error:", e);
+    utter.onstart = () => console.log("🔊 Speech started");
+    utter.onend = () => console.log("✅ Speech ended");
+    utter.onerror = e => console.error("❌ Speech synthesis error:", e.error);
 
-    // Speak
     synth.speak(utter);
-
-    console.log("SpeakButton received:", translated, lang);
   };
 
   return (
