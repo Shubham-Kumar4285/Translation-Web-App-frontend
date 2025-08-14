@@ -6,7 +6,7 @@ function SpeakButton({ translated, lang }) {
     }
 
     const synth = window.speechSynthesis;
-    synth.cancel(); // stop any current speech
+    synth.cancel(); // stop any ongoing speech
 
     let voices = synth.getVoices();
 
@@ -23,10 +23,8 @@ function SpeakButton({ translated, lang }) {
   const speakNow = (text, lang, voices, synth) => {
     const utter = new SpeechSynthesisUtterance(text);
 
-    // Find a matching voice for the given lang ('en', 'en-US', 'es', etc.)
-    const matchingVoice =
-      voices.find(v => v.lang.toLowerCase().startsWith(lang.toLowerCase())) ||
-      voices[0];
+    // Find a voice matching the lang, fallback to first voice if none found
+    const matchingVoice = voices.find(v => v.lang.toLowerCase().startsWith(lang.toLowerCase())) || voices[0];
 
     if (matchingVoice) {
       utter.voice = matchingVoice;
